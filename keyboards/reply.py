@@ -4,7 +4,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 BTN_GPT = "Чат-бот"
 BTN_FACT = "Цікавий факт"
 BTN_TALK = "Відома особистість"
-BTN_QUIZ = "Налаштування"
+BTN_QUIZ = "QUIZ"
 
 
 main_menu_kb = ReplyKeyboardMarkup(keyboard=
