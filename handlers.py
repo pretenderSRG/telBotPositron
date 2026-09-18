@@ -2,21 +2,31 @@ import logging
 
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, CallbackQuery
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message, CallbackQuery, FSInputFile
 
 import keyboards.reply as reply_kb
 import keyboards.inline as inline_kb
 from utils.logger_config import setup_logging
+from utils.utils import image_path, load_message
 
 router = Router()
 
 setup_logging()
 
+async def show_main_menu(message: Message, state: FSMContext):
+    """Показує головне меню"""
+    await state.clear()
+    await message.answer_photo(
+        photo=FSInputFile(image_path("main")),
+        caption=load_message("main"),
+        reply_markup=reply_kb.main_menu_kb,
+    )
+
 @router.message(CommandStart())
-async def handle_start(message: Message):
+async def handle_start(message: Message, state: FSMContext):
     logging.info(f"Користувач {message.from_user.first_name} натиснув /start")
-    await message.answer(text=f"Привіт {message.from_user.first_name}!",
-                         reply_markup = reply_kb.main_menu_kb)
+    await show_main_menu(message, state)
 
 @router.message(Command(commands=["help"]))
 async def handle_help(message: Message):
