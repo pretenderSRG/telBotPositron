@@ -75,30 +75,9 @@ def talk_kb() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-# ==== TRANSLATE ====
+# ==== GYM ====
 
-CB_TRANSLATE_CHANGE = "translate:change"
-
-class LanguageCallback(CallbackData, prefix="language"):
-    code: str
-
-
-def languages_kb() -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-
-    for code, name in LANGUAGES.items():
-        builder.button(text=name, callback_data=LanguageCallback(code=code))
-
-    builder.adjust(2)
-    return builder.as_markup()
-
-
-translate_kb = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [InlineKeyboardButton(text="🌐 Інша мова", callback_data=CB_TRANSLATE_CHANGE)],
-        [InlineKeyboardButton(text="❌ Закінчити", callback_data=CB_FINISH)],
-    ]
-)
+CB_GYM = "translate:change"
 
 
 # ==== RECOMMEND ====
