@@ -36,11 +36,6 @@ async def handle_command_gpt(message: Message, state: FSMContext):
     await start_gpt_dialog(message, state)
 
 
-# @router.message(F.text == reply_kb.BTN_GPT)
-# async def handle_gpt(message: Message, state: FSMContext):
-#     await start_gpt_dialog(message, state)
-
-
 @router.message(GPTStates.dialog, USER_TEXT)
 async def handle_gpt_message(message: Message):
     text = await ask(load_prompt("gpt"), message.text)
