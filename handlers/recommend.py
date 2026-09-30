@@ -11,7 +11,7 @@ import keyboards.inline as inline_kb
 import keyboards.reply as reply_kb
 from catalog import FALLBACK, RECOMMEND_CATEGORIES
 from filters import USER_TEXT
-from gpt import ask
+from chat_gpt import ask
 from utils.utils import load_message, load_prompt
 
 logger = logging.getLogger(__name__)
@@ -81,7 +81,7 @@ async def handle_choose_category(
 
     await callback.message.answer(
         f"Категорія: <b>{RECOMMEND_CATEGORIES[category]}</b>\n"
-        f"Які у тебе є додаткові вподобання? Напиши словами — наприклад «фантастика» або «щось легке»."
+        f"Які у тебе є додаткові вподобання? Напиши словами"
     )
     await callback.answer()
 

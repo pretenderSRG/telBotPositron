@@ -14,6 +14,8 @@ class Settings:
     OPENAI_MAX_TOKENS: int = int(os.getenv("OPENAI_MAX_TOKENS", "600"))
     OPENAI_TIMEOUT: float = float(os.getenv("OPENAI_TIMEOUT", "30"))
 
+    MAX_GPT_HISTORY: int = int(os.getenv("MAX_GPT_HISTORY", "10"))
+
     def validate(self):
         missing = [
             name

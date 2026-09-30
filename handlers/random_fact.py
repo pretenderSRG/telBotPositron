@@ -9,7 +9,7 @@ from aiogram.utils.chat_action import ChatActionSender
 
 import keyboards.reply as reply_kb
 from catalog import FACT_TOPICS, FALLBACK
-from gpt import ask
+from chat_gpt import ask
 from keyboards.inline import CB_RANDOM_MORE, random_fact_kb
 from utils.utils import image_path, load_message, load_prompt
 

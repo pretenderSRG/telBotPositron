@@ -2,7 +2,14 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from catalog import QUIZ_TOPICS, PERSONS, LANGUAGES, RECOMMEND_CATEGORIES
+from catalog import (
+    DAYS,
+    EQUIPMENT,
+    GYM,
+    PERSONS,
+    QUIZ_TOPICS,
+    RECOMMEND_CATEGORIES,
+)
 
 CB_RANDOM_MORE = "random:more"
 CB_FINISH = "common:finish"
@@ -77,7 +84,48 @@ def talk_kb() -> InlineKeyboardMarkup:
 
 # ==== GYM ====
 
-CB_GYM = "translate:change"
+class GymCallback(CallbackData, prefix="gym"):
+    step: str
+    value: str
+
+# Keyboard for gym program selection
+def gym_programs_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+
+    for key, name in GYM.items():
+        builder.button(
+            text=name,
+            callback_data=GymCallback(step="program", value=key),
+        )
+
+    builder.adjust(2)
+    return builder.as_markup()
+
+# Keyboards for numbers of day exercise selection
+def gym_days_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+
+    for key, name in DAYS.items():
+        builder.button(
+            text=name,
+            callback_data=GymCallback(step="days", value=key),
+        )
+
+    builder.adjust(3)
+    return builder.as_markup()
+
+# Keyboard for equipment selection
+def gym_equipment_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+
+    for key, name in EQUIPMENT.items():
+        builder.button(
+            text=name,
+            callback_data=GymCallback(step="equipment", value=key),
+        )
+
+    builder.adjust(1)
+    return builder.as_markup()
 
 
 # ==== RECOMMEND ====

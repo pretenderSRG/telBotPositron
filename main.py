@@ -7,6 +7,8 @@ from aiogram.enums import ParseMode
 from aiogram.types import BotCommand
 
 from config import settings
+from handlers.errors import handle_error
+from middlewares.throttling import ThrottlingMiddleware
 from utils.logger_config import setup_logging
 from handlers import routers
 
@@ -21,6 +23,8 @@ async def set_commands(bot: Bot) -> None:
         BotCommand(command="gpt", description="Питання до ChatGPT"),
         BotCommand(command="talk", description="Діалог з відомою особистістю"),
         BotCommand(command="quiz", description="Квіз"),
+        BotCommand(command="recommend", description="Рекомендації"),
+        BotCommand(command="gym", description="Тренування"),
     ])
 
 
@@ -37,6 +41,11 @@ async def main():
     await set_commands(bot)
 
     dp.include_routers(*routers)
+    dp.error.register(handle_error)
+
+    throttling = ThrottlingMiddleware(rate_limit=1.0)
+    dp.message.outer_middleware(throttling)
+    dp.callback_query.outer_middleware(throttling)
 
     print("Запуск бота...")
     await dp.start_polling(bot)

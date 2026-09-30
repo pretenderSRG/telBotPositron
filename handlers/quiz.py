@@ -12,7 +12,7 @@ import keyboards.inline as inline_kb
 import keyboards.reply as reply_kb
 from catalog import FALLBACK, QUIZ_TOPICS
 from filters import USER_TEXT
-from gpt import ask
+from chat_gpt import ask
 from utils.utils import image_path, load_message, load_prompt
 
 router = Router(name="quiz")
