@@ -1,6 +1,6 @@
 import json
 import logging
-import os
+
 
 from aiogram import F, Router
 from aiogram.filters import Command, CommandStart
@@ -14,6 +14,7 @@ from utils.utils import image_path, load_message
 
 router = Router(name="common")
 logger = logging.getLogger(__name__)
+USERS_FILE = Path(__file__).resolve().parent.parent / "users.json"
 
 
 async def show_main_menu(message: Message, state: FSMContext) -> None:
@@ -30,25 +31,25 @@ async def show_main_menu(message: Message, state: FSMContext) -> None:
 async def handle_start(message: Message, state: FSMContext):
     user = message.from_user
 
-    if not os.path.exists("users.json"):
-        with open("users.json", "w", encoding="utf-8") as f:
-            users = {}
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, "r", encoding="utf-8") as f:
+            users: dict = json.load(f)
+    else:
+        users = {}
 
-            json.dump(users, f, ensure_ascii=False, indent=4)
+    users[str(user.id)] = {
+        "username": user.username,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+    }
 
-    with open("users.json", "r+", encoding="utf-8") as f:
-        users: dict = json.load(f)
+    with open(USERS_FILE, "w", encoding="utf-8") as f:
+        json.dump(users, f, ensure_ascii=False, indent=4)
 
-        users[user.id] = {
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-        }
-
-    # with open("users.json", "w", encoding="utf-8") as f:
-    #     json.dump(users, f, ensure_ascii=False, indent=4)
-
-    logger.info("Користувач %s натиснув /start", message.from_user.username or message.from_user.first_name)
+    logger.info(
+        "Користувач %s натиснув /start",
+        message.from_user.username or message.from_user.first_name,
+    )
 
     await show_main_menu(message, state)
 
