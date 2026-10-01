@@ -9,12 +9,13 @@ from aiogram.types import CallbackQuery, FSInputFile, Message
 
 import keyboards.inline as inline_kb
 import keyboards.reply as reply_kb
+from config import settings
 from handlers.quiz import get_quiz_summary
 from utils.utils import image_path, load_message
 
 router = Router(name="common")
 logger = logging.getLogger(__name__)
-USERS_FILE = "users.json"
+USERS_FILE = settings.USERS_FILE
 
 
 async def show_main_menu(message: Message, state: FSMContext) -> None:
@@ -56,17 +57,7 @@ async def handle_start(message: Message, state: FSMContext):
 
 @router.message(Command(commands=["help"]))
 async def handle_help(message: Message):
-    await message.answer(
-        "Доступні команди:\n"
-        "/start - Розпочати\n"
-        "/help - Ця команда\n"
-        "/random - Випадковий факт\n"
-        "/gpt - Чат-бот\n"
-        "/talk - Діалог з відомою особистістю\n"
-        "/recommend - Рекомендації\n"
-        "/qym - Тренування\n"
-        "/quiz - Квіз"
-    )
+    await message.answer_photo(photo=FSInputFile(image_path("help")), caption=load_message("help"))
 
 
 @router.callback_query(F.data == inline_kb.CB_FINISH)

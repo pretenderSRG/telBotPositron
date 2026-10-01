@@ -92,7 +92,7 @@ async def send_question(message: Message, state: FSMContext) -> None:
 @router.message(Command("quiz"))
 @router.message(F.text == reply_kb.BTN_QUIZ)
 async def handle_quiz(message: Message, state: FSMContext):
-    logger.info("Користувач %s почав квіз", message.from_user.username or message.from_user.first_name)
+    logger.info("Користувач %s почав вікторину", message.from_user.username or message.from_user.first_name)
 
     await state.clear()
     await state.set_state(QuizStates.choosing_topic)
@@ -172,7 +172,7 @@ async def handle_next_question(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_reply_markup(reply_markup=None)
 
     if "topic" not in await state.get_data():
-        await callback.message.answer("Квіз уже завершено. Почни заново: /quiz")
+        await callback.message.answer("Вікторину уже завершено. Почни заново: /quiz")
         return
 
     await send_question(callback.message, state)

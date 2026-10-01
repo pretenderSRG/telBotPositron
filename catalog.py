@@ -21,15 +21,6 @@ QUIZ_TOPICS = {
     "movies": "Кіно",
 }
 
-
-PERSONS = {
-    "cobain": "Курт Кобейн",
-    "queen": "Єлизавета II",
-    "tolkien": "Джон Толкін",
-    "nietzsche": "Фрідріх Ніцше",
-    "hawking": "Стівен Гокінг",
-}
-
 GYM = {
     "full_body": "Все тіло",
     "split": "Спліт",

@@ -26,12 +26,11 @@ class GymStates(StatesGroup):
 @router.message(Command("gym"))
 @router.message(F.text == reply_kb.BTN_GYM)
 async def handle_gym(message: Message, state: FSMContext):
-    logger.info("Користувач %s вибрав команду /gym", message.from_user.username or message.from_user.username)
+    logger.info("Користувач %s вибрав команду тренування", message.from_user.username or message.from_user.username)
     await state.clear()
     await state.set_state(GymStates.program)
     await message.answer_photo(photo=FSInputFile(image_path("gym")),
-                               caption=load_message("gym"),
-                               reply_markup=inline_kb.finish_kb)
+                               caption=load_message("gym"))
     await message.answer(
         "Обери тип програми тренувань:",
         reply_markup=inline_kb.gym_programs_kb(),

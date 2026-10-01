@@ -35,7 +35,7 @@ async def handle_talk(message: Message, state: FSMContext):
                                caption=load_message("talk"),
                                reply_markup=inline_kb.finish_kb)
     await message.answer(
-        "Введи ім'я персонажа, з яким хочеш поспілкуватися:"
+        "Введи ім'я будь-якого відомого персонажа, з яким хочеш поспілкуватися:"
     )
 
 

@@ -3,7 +3,7 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 BTN_GPT = "🤖 Чат-бот"
 BTN_FACT = "🧠 Цікавий факт"
 BTN_TALK = "👤 Відома особистість"
-BTN_QUIZ = "❓ Квіз"
+BTN_QUIZ = "❓ Вікторина"
 BTN_GYM = "🏋️‍♀️ Тренування"
 BTN_RECOMMEND = "🤓☝️ Рекомендації"
 
