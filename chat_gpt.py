@@ -10,6 +10,7 @@ from openai import (
 )
 
 from config import settings
+from utils.utils import load_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -87,13 +88,7 @@ async def check_person_exists(person: str) -> bool | None:
             messages=[
                 {
                     "role": "system",
-                    "content": (
-                        "Check whether this is an identifiable living or "
-                        "historical person, or a known fictional character. "
-                        "Reply only as JSON with one boolean field: "
-                        '{"exists": true} or {"exists": false}. Use false for '
-                        "unknown or ambiguous names."
-                    ),
+                    "content": load_prompt("person_check"),
                 },
                 {"role": "user", "content": person},
             ],
