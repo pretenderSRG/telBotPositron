@@ -6,7 +6,6 @@ from catalog import (
     DAYS,
     EQUIPMENT,
     GYM,
-    PERSONS,
     QUIZ_TOPICS,
     RECOMMEND_CATEGORIES,
 )
