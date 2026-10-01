@@ -4,14 +4,14 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, FSInputFile
 from aiogram.utils.chat_action import ChatActionSender
 
 import keyboards.inline as inline_kb
 import keyboards.reply as reply_kb
 from catalog import DAYS, EQUIPMENT, FALLBACK, GYM
 from chat_gpt import ask
-from utils.utils import load_prompt
+from utils.utils import load_prompt, image_path, load_message
 
 logger = logging.getLogger(__name__)
 router = Router(name="gym")
@@ -26,8 +26,12 @@ class GymStates(StatesGroup):
 @router.message(Command("gym"))
 @router.message(F.text == reply_kb.BTN_GYM)
 async def handle_gym(message: Message, state: FSMContext):
+    logger.info("Користувач %s вибрав команду /gym", message.from_user.username or message.from_user.username)
     await state.clear()
     await state.set_state(GymStates.program)
+    await message.answer_photo(photo=FSInputFile(image_path("gym")),
+                               caption=load_message("gym"),
+                               reply_markup=inline_kb.finish_kb)
     await message.answer(
         "Обери тип програми тренувань:",
         reply_markup=inline_kb.gym_programs_kb(),
@@ -54,9 +58,10 @@ async def handle_gym_choice(
         await state.set_state(GymStates.days)
         await callback.message.edit_reply_markup(reply_markup=None)
         await callback.message.answer(
-            f"Програма: <b>{GYM[value]}</b>\nНа скільки днів скласти план?",
+            f"Програма: <b>{GYM[value]}</b>\nКількість днів тренування в тиждень?",
             reply_markup=inline_kb.gym_days_kb(),
         )
+        logger.info("Вибрана програма тренувань '%s'", value)
         return
 
     if (
@@ -68,10 +73,11 @@ async def handle_gym_choice(
         await state.set_state(GymStates.equipment)
         await callback.message.edit_reply_markup(reply_markup=None)
         await callback.message.answer(
-            f"Кількість днів: <b>{DAYS[value]}</b>\n"
-            "Обери доступне обладнання:",
+            f"Кількість днів тренування в тиждень: <b>{DAYS[value]}</b>\n"
+            "Доступне обладнання:",
             reply_markup=inline_kb.gym_equipment_kb(),
         )
+        logger.info("Вибрано %s днів тренувань", value)
         return
 
     if (
@@ -80,13 +86,21 @@ async def handle_gym_choice(
         and value in EQUIPMENT
     ):
         await state.update_data(equipment=value)
-        await callback.message.edit_reply_markup(reply_markup=None)
+        logger.info("Вибране обладнання - '%s'", value)
+        data = await state.get_data()
+        await callback.message.edit_text(
+            f"Кількість днів тренування в тиждень: <b>{DAYS[data['days']]}</b>\n"
+            f"Доступне обладнання: <b>{EQUIPMENT[value]}</b>",
+            reply_markup=None,
+        )
         await send_gym_program(callback.message, state)
+        logger.info("Програму тренувань надіслано")
         return
 
     await callback.message.answer(
         "Цей вибір уже неактуальний. Почни заново: /gym"
     )
+    logger.warning("Не актуальний вибір %s", value)
 
 
 async def send_gym_program(message: Message, state: FSMContext) -> None:

@@ -45,11 +45,11 @@ async def handle_gpt_message(message: Message):
         return
 
     if isinstance(text, list):
-        for ind, text_item in enumerate(text):
+        for i, text_item in enumerate(text):
             await message.answer(
                 text_item,
                 reply_markup=(
-                    inline_kb.finish_kb if ind == len(text) - 1 else None
+                    inline_kb.finish_kb if i == len(text) - 1 else None
                 ),
             )
         return

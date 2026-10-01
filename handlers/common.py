@@ -1,6 +1,6 @@
 import json
 import logging
-
+import os
 
 from aiogram import F, Router
 from aiogram.filters import Command, CommandStart
@@ -14,7 +14,7 @@ from utils.utils import image_path, load_message
 
 router = Router(name="common")
 logger = logging.getLogger(__name__)
-USERS_FILE = Path(__file__).resolve().parent.parent / "users.json"
+USERS_FILE = "users.json"
 
 
 async def show_main_menu(message: Message, state: FSMContext) -> None:
@@ -63,7 +63,7 @@ async def handle_help(message: Message):
         "/random - Випадковий факт\n"
         "/gpt - Чат-бот\n"
         "/talk - Діалог з відомою особистістю\n"
-        "/recommend - Реконендації\n"
+        "/recommend - Рекомендації\n"
         "/qym - Тренування\n"
         "/quiz - Квіз"
     )

@@ -4,7 +4,7 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, FSInputFile
 from aiogram.utils.chat_action import ChatActionSender
 
 import keyboards.inline as inline_kb
@@ -12,7 +12,7 @@ import keyboards.reply as reply_kb
 from catalog import FALLBACK, RECOMMEND_CATEGORIES
 from filters import USER_TEXT
 from chat_gpt import ask
-from utils.utils import load_message, load_prompt
+from utils.utils import load_message, load_prompt, image_path
 
 logger = logging.getLogger(__name__)
 router = Router(name="recommend")
@@ -56,10 +56,11 @@ async def send_recommendation(message: Message, state: FSMContext):
 async def handle_recommend(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(RecommendStates.choosing_category)
-    await message.answer(
-        text=load_message("recommend"),
-        reply_markup=inline_kb.choose_recommend_categories_kb()
-    )
+    logger.info("Користувач %s вибрав рекомендації", message.from_user.username or message.from_user.first_name)
+    await message.answer_photo(photo=FSInputFile(image_path("advice")),
+                               caption=load_message("recommend"),
+                               reply_markup=inline_kb.choose_recommend_categories_kb())
+
 
 
 @router.callback_query(inline_kb.CategoryCallback.filter())
@@ -113,7 +114,7 @@ async def handle_dislike(callback: CallbackQuery, state: FSMContext):
 
     if title and title not in disliked:
         await state.update_data(disliked=[*disliked, title])
-        logger.info("Користувач %s відкинув %r", callback.from_user.id, title)
+        logger.info("Користувач %s відкинув %r", callback.from_user.username or callback.from_user.first_name, title)
 
     await callback.message.edit_reply_markup(reply_markup=None)
     await send_recommendation(callback.message, state)

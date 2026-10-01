@@ -29,6 +29,7 @@ class QuizStates(StatesGroup):
 
 
 async def get_quiz_summary(state: FSMContext) -> str | None:
+    """Підраховує правильні відповіді на запитання вікторини"""
     current_state = await state.get_state()
 
     if current_state is None or not current_state.startswith(QuizStates.__name__):
@@ -91,7 +92,7 @@ async def send_question(message: Message, state: FSMContext) -> None:
 @router.message(Command("quiz"))
 @router.message(F.text == reply_kb.BTN_QUIZ)
 async def handle_quiz(message: Message, state: FSMContext):
-    logger.info("Користувач %s почав квіз", message.from_user.id)
+    logger.info("Користувач %s почав квіз", message.from_user.username or message.from_user.first_name)
 
     await state.clear()
     await state.set_state(QuizStates.choosing_topic)
@@ -115,12 +116,14 @@ async def handle_choose_topic(
     topic = callback_data.topic
 
     if topic not in QUIZ_TOPICS:
+        logger.warning("Користувач вибрав тему '%s' якої немає в списку запропонованих", topic)
         await callback.message.answer("Такої теми вже немає. Почни заново: /quiz")
         return
 
     await callback.message.edit_reply_markup(reply_markup=None)
     await state.update_data(topic=topic, asked=[])
     await callback.message.answer(f"Тема: <b>{QUIZ_TOPICS[topic]}</b>")
+    logger.info("Користувач вибрав тему %s", topic)
 
     await send_question(callback.message, state)
 

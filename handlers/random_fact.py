@@ -34,7 +34,7 @@ async def send_fact(message: Message):
 @router.message(Command("random"))
 @router.message(F.text == reply_kb.BTN_FACT)
 async def handle_fact(message: Message, state: FSMContext):
-    logger.info("Користувач %s попросив факт", message.from_user.id)
+    logger.info("Користувач %s попросив факт", message.from_user.username or message.from_user.first_name)
 
     await state.clear()
     await message.answer_photo(

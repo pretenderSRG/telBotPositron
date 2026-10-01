@@ -1,3 +1,4 @@
+import json
 import logging
 
 from openai import (
@@ -78,3 +79,32 @@ async def ask_history(
     messages = [{"role": "system", "content": system_prompt}, *history]
     return await complete(messages)
 
+
+async def check_person_exists(person: str) -> bool | None:
+    try:
+        response = await client.chat.completions.create(
+            model=settings.OPENAI_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Check whether this is an identifiable living or "
+                        "historical person, or a known fictional character. "
+                        "Reply only as JSON with one boolean field: "
+                        '{"exists": true} or {"exists": false}. Use false for '
+                        "unknown or ambiguous names."
+                    ),
+                },
+                {"role": "user", "content": person},
+            ],
+            response_format={"type": "json_object"},
+            reasoning_effort=settings.OPENAI_REASONING,
+            max_completion_tokens=100,
+        )
+        content = response.choices[0].message.content
+        result = json.loads(content or "")
+        exists = result.get("exists")
+        return exists if isinstance(exists, bool) else None
+    except Exception:
+        logger.exception("Не вдалося перевірити персонажа %s", person)
+        return None
