@@ -20,25 +20,25 @@ class ThrottlingMiddleware(BaseMiddleware):
         if user is None:
             return await handler(event, data)
 
-        if user.username in self.busy:
-            logger.info("Тротлінг: користувач %s не дочекався відповіді", user.username)
+        if user.id in self.busy:
+            logger.info("Тротлінг: користувач %s не дочекався відповіді", user.id)
             await self.warn(event, "Зачекай, я ще думаю над попереднім ⏳")
             return None
 
         now = time.monotonic()
 
         if now - self.last_call.get(user.id, 0) < self.rate_limit:
-            logger.info("Тротлінг: користувач %s пише надто швидко", user.username)
+            logger.info("Тротлінг: користувач %s пише надто швидко", user.id)
             await self.warn(event, "Не так швидко 🙂")
             return None
 
-        self.busy.add(user.username)
+        self.busy.add(user.id)
 
         try:
             return await handler(event, data)
         finally:
-            self.busy.discard(user.username)
-            self.last_call[user.username] = time.monotonic()
+            self.busy.discard(user.id)
+            self.last_call[user.id] = time.monotonic()
 
 
     async def warn(self, event: TelegramObject, text: str):
